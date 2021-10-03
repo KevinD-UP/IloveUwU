@@ -7,35 +7,40 @@ import {
   Put,
   Delete,
 } from '@nestjs/common';
-import { UserService } from './users.service';
+import { UsersService } from './users.service';
 import { User as UserModel } from '@prisma/client';
 @Controller('users')
 export class UsersController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly usersService: UsersService) {}
 
-  @Get('users')
+  @Get('')
   async getAllUsers(): Promise<UserModel[]> {
-    return this.userService.getUsers();
+    return this.usersService.getUsers();
   }
 
-  @Post('users/create')
+  @Get(':id')
+  async getUserById(@Param('id') id: string): Promise<UserModel> {
+    return this.usersService.getUsersById({ id: Number(id) });
+  }
+
+  @Post('create')
   async createUser(
     @Body() userData: { name: string; email: string },
   ): Promise<UserModel> {
-    return this.userService.createUser(userData);
+    return this.usersService.createUser(userData);
   }
 
-  @Delete('users/:id')
+  @Delete(':id')
   async deleteUser(@Param('id') id: string): Promise<UserModel> {
-    return this.userService.deleteUser({ id: Number(id) });
+    return this.usersService.deleteUser({ id: Number(id) });
   }
 
-  @Put('user/:id/update')
+  @Put(':id/update')
   async updateUser(
     @Param('id') id: string,
     @Body() userData: { name: string; email: string; bio?: string },
   ): Promise<UserModel> {
-    return this.userService.updateUser({
+    return this.usersService.updateUser({
       data: userData,
       where: { id: Number(id) },
     });
